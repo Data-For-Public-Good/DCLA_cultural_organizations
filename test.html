@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+path {
+  stroke: white;
+  stroke-width: 0.25px;
+  fill: grey;
+}
+</style>
+<body>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <svg width="960" height="720"></svg>
+<script>
+    var width = 960,
+        height = 500;
+
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
+
+    var g = svg.append("g");
+
+    let locations = [];
+    d3.json("nyc.json", function (error, nyc) {
+        var projection = d3.geoConicConformal()
+            .parallels([33, 45])
+            .rotate([96, -39])
+            .fitSize([width, height], nyc);
+
+        var path = d3.geoPath()
+            .projection(projection);
+
+        g.selectAll("path")
+            .data(nyc.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+
+        // var location = [-73.9274158, 40.8190591]
+        // svg.selectAll("circle")
+        //     .data([location]).enter()
+        //     .append("circle")
+        //     .attr("cx", function (d) { console.log(projection(d)); return projection(d)[0]; })
+        //     .attr("cy", function (d) { return projection(d)[1]; })
+        //     .attr("r", "8px")
+        //     .attr("fill", "red")
+
+        d3.csv("Georeferenced_DCLA_cultural_organizations_updated.csv", function (data) {
+            for (i in data) {
+                if(Boolean(data[i].longitude)){
+                    var location = [Number(data[i].longitude), Number(data[i].latitude)];
+                    locations.push(location);
+                }
+            }
+            svg.selectAll("circle")
+            .data(locations).enter()
+            .append("circle")
+            .attr("cx", function (d) { console.log(projection(d)); return projection(d)[0]; })
+            .attr("cy", function (d) { return projection(d)[1]; })
+            .attr("r", "8px")
+            .attr("fill", "red")
+        });
+    });
+
+</script>
+</body>
+</html>
