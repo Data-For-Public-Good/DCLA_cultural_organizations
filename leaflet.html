@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>First Leaflet</title>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+
+	<script src="https://unpkg.com/papaparse@4.6.3/papaparse.min.js"></script>
+	<style type="text/css">
+	#map { 
+		height: 700px;
+		 }
+	</style>
+</head>
+<body>
+<div id="map"/>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script type="text/javascript">
+
+// //var csv is the CSV file with headers
+// function csvJSON(csv){
+
+//   var lines=csv.split("\n");
+
+//   var result = [];
+
+//   var headers=lines[0].split(",");
+
+//   for(var i=1;i<lines.length;i++){
+
+// 	  var obj = {};
+// 	  var currentline=lines[i].split(",");
+
+// 	  for(var j=0;j<headers.length;j++){
+// 		  obj[headers[j]] = currentline[j];
+// 	  }
+
+// 	  result.push(obj);
+
+//   }  
+//   //return result; //JavaScript object
+//   return JSON.stringify(result); //JSON
+// }
+// function loadFile(filePath) {
+//   var result = null;
+//   var xmlhttp = new XMLHttpRequest();
+//   xmlhttp.open("GET", filePath, false);
+//   xmlhttp.send();
+//   if (xmlhttp.status==200) {
+//     result = xmlhttp.responseText;
+//   }
+//   return result;
+// }
+var map = L.map('map').setView([40.7590, -73.9844], 12);
+
+// var csv = loadFile('Georeferenced_DCLA_cultural_organizations_updated.csv');
+// var data = csvJSON(csv);
+// data = JSON.parse(data);
+
+
+// L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+//     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+// }).addTo(map);		
+var baseLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/basemap/{z}/{x}/{y}.jpg', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([39.3682, -75.9374], [42.0329, -71.7187])
+});
+
+map.addLayer(baseLayer);
+
+var labelLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/label/{z}/{x}/{y}.png8', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([40.0341, -74.2727], [41.2919, -71.9101])
+});
+
+map.addLayer(labelLayer);
+console.log(data)
+
+// Parse local CSV file
+var data;
+
+Papa.parse('../Georeferenced_DCLA_cultural_organizations_updated.csv', {
+  header: true,
+  download: true,
+  dynamicTyping: true,
+  complete: function(results) {
+    console.log(results);
+	data = results.data;
+	console.log(data[1].latitude);
+marker = new L.marker([data[1].latitude,data[1].longitude])
+				.bindPopup(data[1][0])
+				.addTo(map);
+for (var i = 0; i < data.length; i++) {
+	if(Boolean(data[i].longitude)){
+		marker = new L.marker([data[i].latitude,data[i].longitude])
+				.bindPopup(data[i][0])
+				.addTo(map);
+                }
+		}
+  }
+});
+
+// var marker1 = L.marker([40.7286, -73.9587]).addTo(map);
+// marker1.bindPopup("<strong>Cafe Grumpy</strong><br>You remmeber this from HBO series Girls.This is a serious coffee shop with a range of single origin coffees. You can do a pour-over or get an espresso based drink.").openPopup();
+
+// var marker2 = L.marker([40.7520, -73.9857]).addTo(map);
+// marker2.bindPopup("<strong>Culture Espresso</strong><br>Culture Espresso is one of the best coffee shops in Manhattan. Their espressos are to die for. The Cortado I had there was one of the best I have ever tasted. ").openPopup();
+
+// var marker3 = L.marker([40.8286, -73.9485]).addTo(map);
+// marker3.bindPopup("<strong>The Chipped Cup</strong><br>This basement cafe serves coffee brewed with Counter Culture beans. The coffee is decent, but the highlight of this place is the  back garden patio").openPopup();
+
+// var marker4 = L.marker([40.7151, -74.0109]).addTo(map);
+// marker4.bindPopup("<strong>Kaffe 1668</strong><br>The theme is sheep. The interiors are all woodgrain mixed with steel and warm industrial themes. The coffee is very good with intimate seating on shared wooden tables and a long mirror on the wall.").openPopup();
+
+// var marker5 = L.marker([40.7457, -73.9882]).addTo(map);
+// marker5.bindPopup("<strong>Stumptown Coffee Roasters</strong><br> On contrary to the rave reviews, the macchiato that I ordered was one of the worst I have ever had. I’m not sure if ordered the right drink or it was not the best day.").openPopup();
+
+// var marker6 = L.marker([40.8100, -73.9620]).addTo(map);
+// marker6.bindPopup("<strong>Joe Coffee</strong><br>The coffee is amazing, we had single-origin pour-over drinks. The greates selling point is the location (Columbia) and the glass building where it is location.").openPopup();
+
+// var marker7 = L.marker([40.7502, -73.9876]).addTo(map);
+// marker7.bindPopup("<strong>Intelligentsia</strong><br>I ordered a pour-over coffee of Kenyan origin which was brewed using an automatic machine. I was told that this equipment maintains a uniform recipe with fixed temperature, quantity of coffee, and amount of water.").openPopup();
+
+// var marker8 = L.marker([40.7074, -73.9500]).addTo(map);
+// marker8.bindPopup("<strong>Mountain Province</strong><br>They specialize in single-origin organic Philippine coffee and Filipino-inspired bakery.").openPopup();
+
+</script>
+</script>
+</body>
+</html>
